@@ -41,7 +41,7 @@ function draw_debug()
 	lg.print(string.format("Frametime: %.3f ms", 1000 * lt.getAverageDelta()), 0, y)
 	y = y + 16
 	
-	love.graphics.pop()
+	lg.pop()
 end
 
 function draw_game()
@@ -63,7 +63,6 @@ function love.update(dt)
 end
 
 function love.draw()
-	local lg = love.graphics
 
 	for i=1, #objects do
 		objects[i]:draw()
