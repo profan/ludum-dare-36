@@ -41,6 +41,7 @@ local tiles = {
 -------------------------------
 
 local camera = Camera(0, 0, 1)
+local player = nil
 
 local camera_state = {
 	-- mouse position on click, will be used as relative to drag position for camera movement
@@ -108,19 +109,20 @@ function setup_game()
 	local make_quads = function()
 		local quads = {}
 		for i=1, 16 do 
-			quads[#quads+1] = lg.newQuad((i-1) * 33, 0, sprite_frame_dim, sprite_frame_dim, resources.player_spritesheet:getDimensions())
+			quads[#quads+1] = lg.newQuad((i-1) * 32, 0, sprite_frame_dim, sprite_frame_dim, resources.player_spritesheet:getDimensions())
 		end 
 		return quads
 	end
 
 	local spritesheet = {
 		image = resources.player_spritesheet,
+		frame_count = spritesheet_frames,
 		quads = make_quads()
 	}
 
 	-- add all the quads and shit
-
-	objects[#objects+1] = Player:new(spritesheet, spritesheet_frames)
+	player = Player:new(spritesheet)
+	objects[#objects+1] = player 
 
 end
 
@@ -222,6 +224,9 @@ function love.keypressed(key, scancode, isrepeat)
 	if scancode == "w" then
 
 	elseif scancode == "a" then
+
+
+
 	elseif scancode == "s" then
 	elseif scancode == "d" then
 	end
