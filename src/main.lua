@@ -8,8 +8,7 @@ require("cupid.debug")
 -- Includes -------------------
 -------------------------------
 
-local Camera = require "hump.camera"
-local Vector = require "hump.vector"
+require "defines"
 
 -------------------------------
 -- Short Forms ----------------
@@ -26,7 +25,7 @@ local le = love.event
 
 local resources = {
 	player = {
-		idle = "resources/player_idle.png"
+		animation = {}
 	}
 }
 
@@ -43,15 +42,14 @@ local tiles = {
 
 local camera = Camera(0, 0, 1)
 
-local player_state = {
-
+local camera_state = {
 	-- mouse position on click, will be used as relative to drag position for camera movement
 	last_m_x = 0,
 	last_m_y = 0
-
 }
 
 local objects = {}
+local resources = {}
 local tile_resources = {}
 
 local map_data = require "data/level"
@@ -78,12 +76,13 @@ local tile_map = {
 -------------------------------
 
 local Object = require "object"
+local Player = require "player"
 
 -------------------------------
 -- Game functions here! -------
 -------------------------------
 
-function setup_game()
+function load_resources()
 
 	-- load the tiles and shit
 	for id, tile in pairs(tiles) do
@@ -93,22 +92,52 @@ function setup_game()
 		end
 	end
 
+	resources.player_spritesheet = lg.newImage("resources/professor_octopus.png")
+
 end
 
-function print_thing(thing, y)
-	lg.print(thing, 0, y)
-	return y + 16
+function setup_game()
+
+	-- load images and such
+	load_resources()
+
+	-- ... create player?
+	local spritesheet_frames = 15 -- I LOVE ME SOME MAGIC NUMBERS
+	local sprite_frame_dim = 32
+
+	local make_quads = function()
+		local quads = {}
+		for i=1, 16 do 
+			quads[#quads+1] = lg.newQuad((i-1) * 33, 0, sprite_frame_dim, sprite_frame_dim, resources.player_spritesheet:getDimensions())
+		end 
+		return quads
+	end
+
+	local spritesheet = {
+		image = resources.player_spritesheet,
+		quads = make_quads()
+	}
+
+	-- add all the quads and shit
+
+	objects[#objects+1] = Player:new(spritesheet, spritesheet_frames)
+
 end
 
 function draw_debug()
 
+	function print_thing(thing, y)
+		lg.print(thing, 0, y)
+		return y + 16
+	end
+
 	local y = 16
 
 	lg.push()
-	lg.translate(love.graphics.getWidth() - 196, y)
+	lg.translate(lg.getWidth() - 196, y)
 	y = print_thing(string.format("FPS: %d", lt.getFPS()), y)
 	y = print_thing(string.format("Frametime: %.3f ms", 1000 * lt.getAverageDelta()), y)
-	y = print_thing(string.format("Mouse Last X: %d, Y: %d", player_state.last_m_x, player_state.last_m_y), y)
+	y = print_thing(string.format("Mouse Last X: %d, Y: %d", camera_state.last_m_x, camera_state.last_m_y), y)
 	y = print_thing(string.format("Camera X: %d, Y: %d", camera.x, camera.y), y)
 	lg.pop()
 
@@ -125,11 +154,8 @@ function draw_map()
 		local res = tile_resources[tile_map.data[i]]
 
 		if res then
-			-- purge the demons this is awful
-			math.randomseed(i)
-			local r = math.random()
-			local rotation = ((r < 0.25 and math.pi * 0.5) or (r < 0.5 and math.pi) or math.pi * 1.5)
-			lg.draw(res, x, y, rotation)
+			-- still awful
+			lg.draw(res, x, y)
 		end
 
 	end
@@ -156,13 +182,14 @@ end
 
 function love.update(dt)
 
+	-- check last x, y when mouse was clicked or held, use as delta for camera movement
 	local m_x, m_y = lm.getPosition()
-	local mouse_dx = player_state.last_m_x - m_x
-	local mouse_dy = player_state.last_m_y - m_y
+	local mouse_dx = camera_state.last_m_x - m_x
+	local mouse_dy = camera_state.last_m_y - m_y
 
 	if lm.isDown(3) then
 		camera:move(mouse_dx, mouse_dy)
-		player_state.last_m_x, player_state.last_m_y = m_x, m_y
+		camera_state.last_m_x, camera_state.last_m_y = m_x, m_y
 	end
 
 	for i=1, #objects do
@@ -192,12 +219,19 @@ function love.keypressed(key, scancode, isrepeat)
 		le.quit()
 	end
 
+	if scancode == "w" then
+
+	elseif scancode == "a" then
+	elseif scancode == "s" then
+	elseif scancode == "d" then
+	end
+
 end
 
 function love.mousepressed(x, y, button, istouch)
 
 	if button == 3 then
-		player_state.last_m_x, player_state.last_m_y = x, y
+		camera_state.last_m_x, camera_state.last_m_y = x, y
 	end
 
 end
