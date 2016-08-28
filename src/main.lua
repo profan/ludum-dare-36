@@ -63,6 +63,8 @@ local objects = {}
 local resources = {}
 local tile_resources = {}
 local lighting_imagedata = {}
+local lighting_image = {}
+local lighting_quad = {}
 
 local map_data = require "data/level"
 
@@ -140,10 +142,11 @@ function setup_game()
 	camera:lookAt(player.pos.x, player.pos.y)
 
 	-- set up texture to use for lighting data
-	local w, h = lg.getDimensions()
-	
 	local im_w, im_h = tile_map.width, tile_map.height
 	lighting_imagedata = li.newImageData(im_w, im_h)
+	lighting_image = lg.newImage(lighting_imagedata)
+	lighting_quad = lg.newQuad(0, 0, im_w * tile_map.tile_width, im_h * tile_map.tile_height, im_w, im_h)
+
 end
 
 function draw_debug()
@@ -181,10 +184,6 @@ function draw_map()
 		end
 
 	end
-
-end
-
-function neighbours(map, x, y)
 
 end
 
@@ -229,12 +228,21 @@ function draw_lighting()
 	local tile_x, tile_y = player.pos.x / tile_map.tile_width, player.pos.y / tile_map.tile_height
 	flood_fill(tile_x, tile_y, 1)
 
+	-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
+	lighting_image:refresh()
+
+	-- somehow scale texture, as it is just one real pixel per tile currently
+	-- QUADSZE WILL SOLVE
+	lg.draw(lighting_image)
+
 end
 
 -- DRAW ALL THE THINGS
 function draw_game()
+
 	draw_map()
 	draw_lighting()
+
 end
 
 -- magnitude of difference between positions to get distance
