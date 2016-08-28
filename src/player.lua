@@ -73,8 +73,6 @@ function player:look_at(pos)
 	local ca = clamp(as, -turn_speed, turn_speed)
 	self:rotate(-ca)
 
-	print(angle, clamped_angle)
-
 end
 
 function player:update(camera, dt)
