@@ -215,12 +215,6 @@ function draw_lighting()
 		-- if out of bounds, geddafuckoutothere
 		if x > tile_map.width or x < 0 or y > tile_map.height or y < 0 then
 			return
-		else
-			-- do not propagate light through the void and not through solid tiles either (should be sane? RETS HOPE SO)
-			local tile = map_index(tile_map, x, y)
-			if is_tile_collideable(tile) or tile == 0 then
-				return
-			end
 		end
 
 		-- AUGH
@@ -231,6 +225,13 @@ function draw_lighting()
 		-- set alpha and shit
 		imd:setPixel(x, y, r, g, b, 255 - lit)
 		local new_it = lit - 25
+
+		-- do not propagate light through the void and not through solid tiles either (should be sane? RETS HOPE SO)
+		--  however, do light these blocks, just don't *send* light through them
+		local tile = map_index(tile_map, x * tile_map.tile_width, y * tile_map.tile_height)
+		if is_tile_collideable(tile) or tile == 0 then
+			return
+		end
 
 		-- pray to the stack gods
 		flood_fill(x, y - 1, lit, new_it)
@@ -286,7 +287,7 @@ function are_colliding(thing_one, thing_two)
 
 end
 
--- derp
+-- derp, oh fuck it takes world positions not tile positions
 function map_index(map, x, y)
 	local i = math.floor((y/map.tile_height)) * map.width + math.floor((x/map.tile_width))
 	return map.data[i]
