@@ -170,9 +170,7 @@ end
 
 -- DRAW ALL THE THINGS
 function draw_game()
-
 	draw_map()
-
 end
 
 -- magnitude of difference between positions to get distance
@@ -231,7 +229,8 @@ function love.update(dt)
 			local map = tile_map.data
 			local tile = map_index(tile_map, objects[i].pos.x, objects[i].pos.y)
 			if is_tile_collideable(tile) then
-				objects[i].collided(tile, true)
+				-- oh
+				objects[i]:collided(tile, true)
 			end
 		end
 	end

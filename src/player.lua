@@ -47,8 +47,10 @@ function player:animate(dt)
 
 end
 
-function player:collided(with, is_tile)
+-- wtf, oh fuck with is nil
+function player:collided(obj, is_tile)
 	if is_tile then
+		self.vel_vec = self.vel_vec:rotated(math.pi)
 		print("i collided with a tile!")
 	else
 		print("i collided with something!")
@@ -104,7 +106,8 @@ function player:update(camera, dt)
 	self:animate(dt) -- gotta regulate by game speed
 
 	self.pos = self.pos + self.vel_vec
-	self.vel_vec = Vector(0, 0)
+	self.vel_vec = self.vel_vec * 0.90
+	--self.vel_vec = Vector(0, 0)
 
 end
 
