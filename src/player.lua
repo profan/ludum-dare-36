@@ -13,9 +13,9 @@ local running_speed = 2
 local movement_speed = 75
 local turn_speed = 0.05 * math.pi -- RADIANS
 
-function player:new(spritesheet, frame_count)
+function player:new(spritesheet, x, y)
 
-	local new_obj = Object:new(0, 0)
+	local new_obj = Object:new(x, y)
 
 	-- set the things
 	new_obj.spritesheet = spritesheet

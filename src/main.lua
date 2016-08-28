@@ -130,7 +130,7 @@ function setup_game()
 	}
 
 	-- add all the quads and shit
-	player = Player:new(spritesheet)
+	player = Player:new(spritesheet, 128, 128)
 	objects[#objects+1] = player 
 
 end
@@ -202,7 +202,7 @@ end
 
 -- just chest collision for now
 function is_tile_collideable(tile)
-	return tile == 4 or tile == 5 or tile == 9 or tile == 10
+	return (tile == 4) or (tile == 5) or (tile == 10) or (tile == 11)
 end
 
 -------------------------------
