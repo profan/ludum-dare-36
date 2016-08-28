@@ -54,7 +54,6 @@ end
 function player:collided(obj, is_tile)
 	if is_tile then
 		self.vel_vec = self.vel_vec:rotated(math.pi) * 10 -- ... good enough :V
-		print("i collided with a tile!")
 	else
 		print("i collided with something!")
 	end

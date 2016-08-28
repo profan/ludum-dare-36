@@ -35,7 +35,13 @@ local tiles = {
 	{name = "rock", fname = "resources/rock.png"},
 	{name = "sandstone", fname = "resources/sandstone_maybe.png"},
 	{name = "chest", fname = "resources/chest.png"},
-	{name = "chest_open", fname = "resources/chest_open.png"}
+	{name = "chest_open", fname = "resources/chest_open.png"},
+	{name = "ornate_tile", fname = "resources/ornate_tile.png"},
+	{name = "floor_tile", fname = "resources/floor_tile.png"},
+	{name = "floor_pillar", fname = "resources/floor_pillar.png"},
+	{},
+	{name = "sandstone_wall", fname = "resources/sandstone_wall.png"},
+	{name = "other_pillar", fname = "resources/other_pillar.png"}
 }
 
 -------------------------------
@@ -62,13 +68,12 @@ local map_data = require "data/level"
 -- WOW FUCKING LUA AND 1 INDEXING YES
 local layer = map_data.layers[1]
 local tileset = map_data.tilesets[1]
-local tiledim = 32
 
 local tile_map = {
 
 	-- fuck you tiled ok
-	tile_width = tiledim,
-	tile_height = tiledim,
+	tile_width = tileset.tilewidth,
+	tile_height = tileset.tileheight,
 
 	data = layer.data,
 	width = layer.width,
@@ -191,13 +196,13 @@ end
 
 -- derp
 function map_index(map, x, y)
-	local i = math.floor((y/32)) * map.width + math.floor((x/32))
+	local i = math.floor((y/map.tile_height)) * map.width + math.floor((x/map.tile_width))
 	return map.data[i]
 end
 
 -- just chest collision for now
 function is_tile_collideable(tile)
-	return tile == 4 or tile == 5
+	return tile == 4 or tile == 5 or tile == 9 or tile == 10
 end
 
 -------------------------------
