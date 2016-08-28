@@ -47,8 +47,12 @@ function player:animate(dt)
 
 end
 
-function player:collided(with)
-
+function player:collided(with, is_tile)
+	if is_tile then
+		print("i collided with a tile!")
+	else
+		print("i collided with something!")
+	end
 end
 
 function player:move(v)

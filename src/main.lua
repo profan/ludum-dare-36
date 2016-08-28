@@ -191,6 +191,17 @@ function are_colliding(thing_one, thing_two)
 
 end
 
+-- derp
+function map_index(map, x, y)
+	local i = (y/32) * map.width + (x/32)
+	return map.data[i]
+end
+
+-- just chest collision for now
+function is_tile_collideable(tile)
+	return tile == 4 or tile == 5
+end
+
 -------------------------------
 -- Love functions go here! ----
 -------------------------------
@@ -216,13 +227,13 @@ function love.update(dt)
 
 	-- handle collidable tiles... mostly simpler?
 	for i=1, #objects do
-
 		if objects[i].collidable then
-
-			objects[i]
-
+			local map = tile_map.data
+			local tile = map_index(tile_map, objects[i].pos.x, objects[i].pos.y)
+			if is_tile_collideable(tile) then
+				objects[i].collided(tile)
+			end
 		end
-	
 	end
 
 	-- handle collisions between objects here
