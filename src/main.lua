@@ -64,7 +64,6 @@ local resources = {}
 local tile_resources = {}
 local lighting_imagedata = {}
 local lighting_image = {}
-local lighting_quad = {}
 
 local map_data = require "data/level"
 
@@ -145,7 +144,14 @@ function setup_game()
 	local im_w, im_h = tile_map.width, tile_map.height
 	lighting_imagedata = li.newImageData(im_w, im_h)
 	lighting_image = lg.newImage(lighting_imagedata)
-	lighting_quad = lg.newQuad(0, 0, im_w * tile_map.tile_width, im_h * tile_map.tile_height, im_w, im_h)
+	lighting_image:setFilter("nearest")
+
+	-- reset imagedata to all black
+	lighting_imagedata:mapPixel(function(x, y, r, g, b, a)
+		return r, g, b, 255
+	end)
+
+	print(string.format("imd w: %d, h: %d", im_w, im_h))
 
 end
 
@@ -190,6 +196,10 @@ end
 -- DRAW ALL THE LIGHTINGS, fast and dirty, MAPULON COMETH
 -- needs to be aware of collidable tiles to not propagate light through walls
 -- turn this into one that uses a queue if it ends up igniting the stack, hopefully it's not consuming that much stack space
+
+local last_tile_x = 0
+local last_tile_y = 0
+
 function draw_lighting()
 
 	local imd = lighting_imagedata
@@ -215,10 +225,10 @@ function draw_lighting()
 
 		-- AUGH
 		local r, g, b, a = imd:getPixel(x, y)
-		if a == 255 then return end
+		if a == 0 then return end
 
-		-- set alpha and 
-		imd:setPixel(x, y, r, g, b, lit)
+		-- set alpha and shit
+		imd:setPixel(x, y, r, g, b, 255 - lit)
 		local new_it = lit - 25
 
 		-- pray to the stack gods
@@ -230,15 +240,24 @@ function draw_lighting()
 	end
 
 	-- start from player position
-	local tile_x, tile_y = player.pos.x / tile_map.tile_width, player.pos.y / tile_map.tile_height
-	flood_fill(math.floor(tile_x), math.floor(tile_y), 255)
+	local tile_x, tile_y = math.floor(player.pos.x / tile_map.tile_width), math.floor(player.pos.y / tile_map.tile_height)
+	if tile_x ~= last_tile_x or tile_y ~= last_tile_y then
+		last_tile_x, last_tile_y = tile_x, tile_y
 
-	-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
-	lighting_image:refresh()
+		lighting_imagedata:mapPixel(function(x, y, r, g, b, a)
+			return r, g, b, 255
+		end)
+
+		flood_fill(tile_x, tile_y, 145)
+
+		-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
+		lighting_image:refresh()
+
+	end
 
 	-- somehow scale texture, as it is just one real pixel per tile currently
-	-- QUADSZE WILL SOLVE
-	lg.draw(lighting_image, lighting_quad)
+	local s_x = tile_map.width
+	lg.draw(lighting_image, 0, 0, 0, tile_map.tile_width, tile_map.tile_height)
 
 end
 
