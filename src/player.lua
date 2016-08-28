@@ -9,7 +9,7 @@ local lm = love.mouse
 local player = {}
 
 local movement_speed = 75
-local turn_speed = 0.1 * math.pi -- RADIANS
+local turn_speed = 0.05 * math.pi -- RADIANS
 
 function player:new(spritesheet, frame_count)
 
@@ -65,10 +65,15 @@ function player:look_at(pos)
 	self.target_dir_vec = pos - self.pos 
 	self.target_dir_vec = self.target_dir_vec:normalized()
 
-	local angle = self.dir_vec:angleTo(self.target_dir_vec)
-	local clamped_angle = clamp(angle, -turn_speed, turn_speed)
+	-- DERPPPPPPPPPPPPPPPPPPPPPPPPPP
+	local cpd = self.target_dir_vec:cross(self.dir_vec)
+
+	-- ARCSIN YES
+	local as = math.asin(cpd)
+	local ca = clamp(as, -turn_speed, turn_speed)
+	self:rotate(-ca)
+
 	print(angle, clamped_angle)
-	self:rotate(clamped_angle)
 
 end
 
