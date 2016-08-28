@@ -86,7 +86,10 @@ function player:draw()
 
 	-- DRAWE ZE FREAMES
 	local coord_system = Vector(0, -1)
-	lg.draw(self.spritesheet.image, self.spritesheet.quads[self.frame], self.pos.x, self.pos.y, self.dir_vec:angleTo(coord_system), 1, 1, 32/2, 32/2)
+
+	-- quad width/height... not spritesheet
+	local x, y, w, h = self.spritesheet.quads[1]:getViewport()
+	lg.draw(self.spritesheet.image, self.spritesheet.quads[self.frame], self.pos.x, self.pos.y, self.dir_vec:angleTo(coord_system), 1, 1, w/2, h/2)
 
 end
 
