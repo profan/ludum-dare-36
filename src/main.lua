@@ -108,7 +108,7 @@ function setup_game()
 
 	local make_quads = function()
 		local quads = {}
-		for i=1, 16 do 
+		for i = 1, spritesheet_frames - 1 do 
 			quads[#quads+1] = lg.newQuad((i-1) * 32, 0, sprite_frame_dim, sprite_frame_dim, resources.player_spritesheet:getDimensions())
 		end 
 		return quads
@@ -195,7 +195,7 @@ function love.update(dt)
 	end
 
 	for i=1, #objects do
-		objects[i]:update(dt)
+		objects[i]:update(camera, dt)
 	end
 
 end
@@ -219,16 +219,6 @@ function love.keypressed(key, scancode, isrepeat)
 
 	if scancode == "escape" then
 		le.quit()
-	end
-
-	if scancode == "w" then
-
-	elseif scancode == "a" then
-
-
-
-	elseif scancode == "s" then
-	elseif scancode == "d" then
 	end
 
 end

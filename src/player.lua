@@ -1,6 +1,7 @@
 -- locals and shit
 local lg = love.graphics
 local lk = love.keyboard
+local lm = love.mouse
 
 local player = {}
 
@@ -45,7 +46,21 @@ function player:rotate(rad)
 
 end
 
-function player:update(dt)
+function player:look_at(pos)
+
+	-- i brain wrong, look at something else for a second
+
+	local tmp_vec = pos - self.pos
+	self.dir_vec = pos - self.pos 
+	self.dir_vec = self.dir_vec:normalized()
+
+	print(self.pos, pos)
+
+end
+
+function player:update(camera, dt)
+
+	-- change movement back to vectors for sideways movement
 
 	if lk.isDown "w" then
 		self:move(200 * dt)
@@ -58,6 +73,8 @@ function player:update(dt)
 	elseif lk.isDown "d" then
 		self:rotate(5 * dt)
 	end
+
+	self:look_at(Vector(camera:worldCoords(lm.getPosition())))
 
 	self:animate()
 
