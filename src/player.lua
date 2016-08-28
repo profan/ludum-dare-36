@@ -8,6 +8,8 @@ local lm = love.mouse
 
 local player = {}
 
+local max_speed = 1
+local running_speed = 2
 local movement_speed = 75
 local turn_speed = 0.05 * math.pi -- RADIANS
 
@@ -51,7 +53,7 @@ end
 -- wtf, oh fuck with is nil
 function player:collided(obj, is_tile)
 	if is_tile then
-		self.vel_vec = self.vel_vec:rotated(math.pi)
+		self.vel_vec = self.vel_vec:rotated(math.pi) * 10 -- ... good enough :V
 		print("i collided with a tile!")
 	else
 		print("i collided with something!")
@@ -59,8 +61,6 @@ function player:collided(obj, is_tile)
 end
 
 function player:move(v)
-
-	local max_speed = 1
 
 	-- yay
 	local ang = self.dir_vec:angleTo(Vector(0, -1))
@@ -108,6 +108,10 @@ function player:update(camera, dt)
 		self:move(Vector(-movement_speed * dt, 0))
 	elseif lk.isDown "d" then
 		self:move(Vector(movement_speed * dt, 0))
+	end
+
+	if lk.isDown "shift" then
+
 	end
 
 	self:look_at(Vector(camera:worldCoords(lm.getPosition())))
