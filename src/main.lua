@@ -193,7 +193,7 @@ end
 
 -- derp
 function map_index(map, x, y)
-	local i = (y/32) * map.width + (x/32)
+	local i = math.floor((y/32)) * map.width + math.floor((x/32))
 	return map.data[i]
 end
 
@@ -231,7 +231,7 @@ function love.update(dt)
 			local map = tile_map.data
 			local tile = map_index(tile_map, objects[i].pos.x, objects[i].pos.y)
 			if is_tile_collideable(tile) then
-				objects[i].collided(tile)
+				objects[i].collided(tile, true)
 			end
 		end
 	end
