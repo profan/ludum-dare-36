@@ -24,9 +24,9 @@ function player:new(spritesheet, frame_count)
 
 end
 
-function player:animate()
+function player:animate(dt)
 
-	if self.vel == 0 then
+	if self.vel_vec == Vector(0, 0) then
 		self.frame = 1
 	else
 		self.frame = ((self.frame + 1) % (#self.spritesheet.quads-1)) + 1
@@ -36,7 +36,9 @@ end
 
 function player:move(v)
 
-	self.vel = self.vel + v
+	-- yay
+	local ang = self.dir_vec:angleTo(Vector(0, -1))
+	self.vel_vec = self.vel_vec + v:rotated(ang)
 
 end
 
@@ -61,24 +63,22 @@ function player:update(camera, dt)
 	-- change movement back to vectors for sideways movement
 
 	if lk.isDown "w" then
-		self:move(200 * dt)
+		self:move(Vector(0, -1))
 	elseif lk.isDown "s" then
-		self:move(-200 * dt)
+		self:move(Vector(0, 1))
 	end
 
 	if lk.isDown "a" then
-		self:rotate(-5 * dt)
+		self:move(Vector(-1, 0))
 	elseif lk.isDown "d" then
-		self:rotate(5 * dt)
+		self:move(Vector(1, 0))
 	end
 
 	self:look_at(Vector(camera:worldCoords(lm.getPosition())))
+	self:animate(dt) -- gotta regulate by game speed
 
-	self:animate()
-
-	self.pos = self.pos + (self.vel * self.dir_vec * movement_speed)
-
-	self.vel = 0
+	self.pos = self.pos + self.vel_vec
+	self.vel_vec = Vector(0, 0)
 
 end
 
