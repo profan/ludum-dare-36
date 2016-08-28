@@ -18,6 +18,7 @@ local lw = love.window
 local lt = love.timer
 local lm = love.mouse
 local le = love.event
+local li = love.image
 
 -------------------------------
 -- Resources ---------
@@ -60,6 +61,7 @@ local camera_state = {
 local objects = {}
 local resources = {}
 local tile_resources = {}
+local lighting_imagedata = {}
 
 local map_data = require "data/level"
 
@@ -133,6 +135,13 @@ function setup_game()
 	player = Player:new(spritesheet, 128, 128)
 	objects[#objects+1] = player 
 
+	-- set camera position to start where player is
+	camera:lookAt(player.pos.x, player.pos.y)
+
+	-- set up lighting
+	local w, h = lg.getDimensions()
+	lighting_imagedata = li.newImageData(w / tile_map.width, h / tile_map.height)
+
 end
 
 function draw_debug()
@@ -168,6 +177,19 @@ function draw_map()
 			-- still awful
 			lg.draw(res, x, y)
 		end
+
+	end
+
+end
+
+function neighbours(map, x, y)
+
+end
+
+-- DRAW ALL THE LIGHTINGS, fast and dirty, MAPULON COMETH
+function draw_lighting()
+
+	function flood_fill()
 
 	end
 
