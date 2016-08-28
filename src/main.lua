@@ -33,7 +33,9 @@ local tiles = {
 	[0] = {name = "void"},
 	{name = "dirt", fname = "resources/dirt.png"},
 	{name = "rock", fname = "resources/rock.png"},
-	{name = "sandstone", fname = "resources/sandstone_maybe.png"}
+	{name = "sandstone", fname = "resources/sandstone_maybe.png"},
+	{name = "chest", fname = "resources/chest.png"},
+	{name = "chest_open", fname = "resources/chest_open.png"}
 }
 
 -------------------------------
@@ -60,11 +62,13 @@ local map_data = require "data/level"
 -- WOW FUCKING LUA AND 1 INDEXING YES
 local layer = map_data.layers[1]
 local tileset = map_data.tilesets[1]
+local tiledim = 32
 
 local tile_map = {
 
-	tile_width = tileset.tilewidth,
-	tile_height = tileset.tileheight,
+	-- fuck you tiled ok
+	tile_width = tiledim,
+	tile_height = tiledim,
 
 	data = layer.data,
 	width = layer.width,
@@ -171,6 +175,22 @@ function draw_game()
 
 end
 
+-- magnitude of difference between positions to get distance
+function distance(p1, p2)
+	return (p1 - p2):len()
+end
+
+-- circle intersection because i am hella lazy
+function are_colliding(thing_one, thing_two)
+
+	if thing_one.radius and thing_two.radius then
+		return distance(thing_one.pos, thing_two.pos) > (thing_one.radius + thing_two.radius)
+	else 
+		return false
+	end
+
+end
+
 -------------------------------
 -- Love functions go here! ----
 -------------------------------
@@ -194,6 +214,29 @@ function love.update(dt)
 		camera_state.last_m_x, camera_state.last_m_y = m_x, m_y
 	end
 
+	-- handle collidable tiles... mostly simpler?
+	for i=1, #objects do
+
+		if objects[i].collidable then
+
+			objects[i]
+
+		end
+	
+	end
+
+	-- handle collisions between objects here
+	for o_i=1, #objects do
+		for i_i=1, #objects do
+			local o_o = objects[o_i]
+			local i_o = objects[i_i]
+			if o_i ~= i_i and are_colliding(o_o, i_o) then
+				objects[o_i].collided(i_o)
+				objects[i_i].collided(o_o)
+			end
+		end
+	end
+
 	for i=1, #objects do
 		objects[i]:update(camera, dt)
 	end
@@ -207,7 +250,7 @@ function love.draw()
 	draw_game()
 
 	for i=1, #objects do
-		objects[i]:draw()
+		objects[i]:draw(camera)
 	end
 
 	camera:detach()

@@ -22,6 +22,9 @@ function player:new(spritesheet, frame_count)
 	new_obj.frame = 1
 	new_obj.time = 0
 
+	-- is collidable
+	new_obj.collidable = true
+
 	setmetatable(new_obj, self)
 	self.__index = self
 
@@ -41,6 +44,10 @@ function player:animate(dt)
 		self.frame = ((self.frame + 1) % (#self.spritesheet.quads-1)) + 1
 		self.time = 0
 	end
+
+end
+
+function player:collided(with)
 
 end
 
@@ -97,7 +104,7 @@ function player:update(camera, dt)
 
 end
 
-function player:draw()
+function player:draw(camera)
 
 	-- DRAWE ZE FREAMES
 	local coord_system = Vector(0, -1)
