@@ -135,7 +135,7 @@ function setup_game()
 	}
 
 	-- add all the quads and shit
-	player = Player:new(spritesheet, 128, 128)
+	player = Player:new(spritesheet, 176, 176)
 	objects[#objects+1] = player 
 
 	-- set camera position to start where player is
@@ -197,6 +197,11 @@ function draw_lighting()
 	-- light intensity is passed along
 	function flood_fill(x, y, lit)
 
+		-- return when no more light to spread
+		if not (lit > 0) then
+			return
+		end
+
 		-- if out of bounds, geddafuckoutothere
 		if x > tile_map.width or x < 0 or y > tile_map.height or y < 0 then
 			return
@@ -210,10 +215,10 @@ function draw_lighting()
 
 		-- AUGH
 		local r, g, b, a = imd:getPixel(x, y)
-		if a == 0 then return end
-	
+		if a == 255 then return end
+
 		-- set alpha and 
-		imd.setPixel(x, y, r, g, b, lit)
+		imd:setPixel(x, y, r, g, b, lit)
 		local new_it = lit - 25
 
 		-- pray to the stack gods
@@ -226,14 +231,14 @@ function draw_lighting()
 
 	-- start from player position
 	local tile_x, tile_y = player.pos.x / tile_map.tile_width, player.pos.y / tile_map.tile_height
-	flood_fill(tile_x, tile_y, 1)
+	flood_fill(math.floor(tile_x), math.floor(tile_y), 255)
 
 	-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
 	lighting_image:refresh()
 
 	-- somehow scale texture, as it is just one real pixel per tile currently
 	-- QUADSZE WILL SOLVE
-	lg.draw(lighting_image)
+	lg.draw(lighting_image, lighting_quad)
 
 end
 
