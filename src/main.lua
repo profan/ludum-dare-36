@@ -141,8 +141,9 @@ function setup_game()
 
 	-- set up texture to use for lighting data
 	local w, h = lg.getDimensions()
-	lighting_imagedata = li.newImageData(w / tile_map.width, h / tile_map.height)
-
+	
+	local im_w, im_h = tile_map.width, tile_map.height
+	lighting_imagedata = li.newImageData(im_w, im_h)
 end
 
 function draw_debug()
@@ -195,21 +196,21 @@ function draw_lighting()
 	local imd = lighting_imagedata
 
 	-- light intensity is passed along
-	function flood_fill(pos, lit)
+	function flood_fill(x, y, lit)
 
 		-- if out of bounds, geddafuckoutothere
-		if pos.x > tile_map.width or pos.x < 0 or pos.y > tile_map.height or pos.y < 0 then
+		if x > tile_map.width or x < 0 or y > tile_map.height or y < 0 then
 			return
 		else
 			-- do not propagate light through the void and not through solid tiles either (should be sane? RETS HOPE SO)
-			local tile = map_index(tile_map, pos.x, pos.y)
+			local tile = map_index(tile_map, x, y)
 			if is_tile_collideable(tile) or tile == 0 then
 				return
 			end
 		end
 
 		-- AUGH
-		local r, g, b, a = imd.getPixel(pos.x, pos.y)
+		local r, g, b, a = imd:getPixel(x, y)
 		if a == 0 then return end
 	
 		-- set alpha and 
@@ -217,15 +218,16 @@ function draw_lighting()
 		local new_it = lit - 25
 
 		-- pray to the stack gods
-		flood_fill(pos + Vector(0, -1), new_it)
-		flood_fill(pos + Vector(0, 1), new_it)
-		flood_fill(pos + Vector(-1, 0), new_it)
-		flood_fill(pos + Vector(1, 0), new_it)
+		flood_fill(x, y - 1, new_it)
+		flood_fill(x, y + 1, new_it)
+		flood_fill(x - 1, y, new_it)
+		flood_fill(x + 1, y, new_it)
 
 	end
 
 	-- start from player position
-	flood_fill(player.pos)
+	local tile_x, tile_y = player.pos.x / tile_map.tile_width, player.pos.y / tile_map.tile_height
+	flood_fill(tile_x, tile_y, 1)
 
 end
 
