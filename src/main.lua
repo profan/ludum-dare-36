@@ -189,12 +189,10 @@ end
 
 -- DRAW ALL THE LIGHTINGS, fast and dirty, MAPULON COMETH
 -- needs to be aware of collidable tiles to not propagate light through walls
+-- turn this into one that uses a queue if it ends up igniting the stack, hopefully it's not consuming that much stack space
 function draw_lighting()
 
 	local imd = lighting_imagedata
-
-	-- start from player position
-	flood_fill(player.pos)
 
 	-- light intensity is passed along
 	function flood_fill(pos, lit)
@@ -202,11 +200,16 @@ function draw_lighting()
 		-- if out of bounds, geddafuckoutothere
 		if pos.x > tile_map.width or pos.x < 0 or pos.y > tile_map.height or pos.y < 0 then
 			return
+		else
+			-- do not propagate light through the void and not through solid tiles either (should be sane? RETS HOPE SO)
+			local tile = map_index(tile_map, pos.x, pos.y)
+			if is_tile_collideable(tile) or tile == 0 then
+				return
+			end
 		end
 
 		-- AUGH
 		local r, g, b, a = imd.getPixel(pos.x, pos.y)
-		if map_index(tile_map, pos.x, pos.y)
 		if a == 0 then return end
 	
 		-- set alpha and 
@@ -221,11 +224,15 @@ function draw_lighting()
 
 	end
 
+	-- start from player position
+	flood_fill(player.pos)
+
 end
 
 -- DRAW ALL THE THINGS
 function draw_game()
 	draw_map()
+	draw_lighting()
 end
 
 -- magnitude of difference between positions to get distance
