@@ -205,7 +205,7 @@ function draw_lighting()
 	local imd = lighting_imagedata
 
 	-- light intensity is passed along
-	function flood_fill(x, y, lit)
+	function flood_fill(x, y, t, lit)
 
 		-- return when no more light to spread
 		if not (lit > 0) then
@@ -226,16 +226,17 @@ function draw_lighting()
 		-- AUGH
 		local r, g, b, a = imd:getPixel(x, y)
 		if a == 0 then return end
+		if t < (255 - a) then return end
 
 		-- set alpha and shit
 		imd:setPixel(x, y, r, g, b, 255 - lit)
 		local new_it = lit - 25
 
 		-- pray to the stack gods
-		flood_fill(x, y - 1, new_it)
-		flood_fill(x, y + 1, new_it)
-		flood_fill(x - 1, y, new_it)
-		flood_fill(x + 1, y, new_it)
+		flood_fill(x, y - 1, lit, new_it)
+		flood_fill(x, y + 1, lit, new_it)
+		flood_fill(x - 1, y, lit, new_it)
+		flood_fill(x + 1, y, lit, new_it)
 
 	end
 
@@ -248,7 +249,7 @@ function draw_lighting()
 			return r, g, b, 255
 		end)
 
-		flood_fill(tile_x, tile_y, 145)
+		flood_fill(tile_x, tile_y, 0, 145)
 
 		-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
 		lighting_image:refresh()
