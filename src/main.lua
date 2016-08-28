@@ -42,7 +42,8 @@ local tiles = {
 	{name = "floor_pillar", fname = "resources/floor_pillar.png"},
 	{},
 	{name = "sandstone_wall", fname = "resources/sandstone_wall.png"},
-	{name = "other_pillar", fname = "resources/other_pillar.png"}
+	{name = "other_pillar", fname = "resources/other_pillar.png"},
+	{name = "bench", fname = "resources/bench.png"}
 }
 
 -------------------------------
@@ -138,7 +139,7 @@ function setup_game()
 	-- set camera position to start where player is
 	camera:lookAt(player.pos.x, player.pos.y)
 
-	-- set up lighting
+	-- set up texture to use for lighting data
 	local w, h = lg.getDimensions()
 	lighting_imagedata = li.newImageData(w / tile_map.width, h / tile_map.height)
 
@@ -187,9 +188,36 @@ function neighbours(map, x, y)
 end
 
 -- DRAW ALL THE LIGHTINGS, fast and dirty, MAPULON COMETH
+-- needs to be aware of collidable tiles to not propagate light through walls
 function draw_lighting()
 
-	function flood_fill()
+	local imd = lighting_imagedata
+
+	-- start from player position
+	flood_fill(player.pos)
+
+	-- light intensity is passed along
+	function flood_fill(pos, lit)
+
+		-- if out of bounds, geddafuckoutothere
+		if pos.x > tile_map.width or pos.x < 0 or pos.y > tile_map.height or pos.y < 0 then
+			return
+		end
+
+		-- AUGH
+		local r, g, b, a = imd.getPixel(pos.x, pos.y)
+		if map_index(tile_map, pos.x, pos.y)
+		if a == 0 then return end
+	
+		-- set alpha and 
+		imd.setPixel(x, y, r, g, b, lit)
+		local new_it = lit - 25
+
+		-- pray to the stack gods
+		flood_fill(pos + Vector(0, -1), new_it)
+		flood_fill(pos + Vector(0, 1), new_it)
+		flood_fill(pos + Vector(-1, 0), new_it)
+		flood_fill(pos + Vector(1, 0), new_it)
 
 	end
 
