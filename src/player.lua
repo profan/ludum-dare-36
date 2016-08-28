@@ -38,7 +38,8 @@ function player:animate(dt)
 
 	self.time = self.time + dt
 
-	if self.vel_vec == Vector(0, 0) then
+	local vel = self.vel_vec:len()
+	if vel < 0.05 then
 		self.frame = 1
 	elseif self.time > 0.1 then
 		self.frame = ((self.frame + 1) % (#self.spritesheet.quads-1)) + 1
@@ -59,9 +60,16 @@ end
 
 function player:move(v)
 
+	local max_speed = 1
+
 	-- yay
 	local ang = self.dir_vec:angleTo(Vector(0, -1))
 	self.vel_vec = self.vel_vec + v:rotated(ang)
+
+	local mag = self.vel_vec:len()
+	if mag > max_speed then
+		self.vel_vec = self.vel_vec * (max_speed / mag)
+	end
 
 end
 
@@ -106,8 +114,7 @@ function player:update(camera, dt)
 	self:animate(dt) -- gotta regulate by game speed
 
 	self.pos = self.pos + self.vel_vec
-	self.vel_vec = self.vel_vec * 0.90
-	--self.vel_vec = Vector(0, 0)
+	self.vel_vec = self.vel_vec * 0.85
 
 end
 
