@@ -224,7 +224,7 @@ function draw_lighting()
 
 		-- set alpha and shit
 		imd:setPixel(x, y, r, g, b, 255 - lit)
-		local new_it = lit - 25
+		local new_it = lit - 12.5
 
 		-- do not propagate light through the void and not through solid tiles either (should be sane? RETS HOPE SO)
 		--  however, do light these blocks, just don't *send* light through them
@@ -243,7 +243,8 @@ function draw_lighting()
 
 	-- start from player position
 	local tile_x, tile_y = math.floor(player.pos.x / tile_map.tile_width), math.floor(player.pos.y / tile_map.tile_height)
-	if tile_x ~= last_tile_x or tile_y ~= last_tile_y then
+	local tile = map_index(tile_map, player.pos.x, player.pos.y)
+	if (tile_x ~= last_tile_x or tile_y ~= last_tile_y) and not is_tile_collideable(tile) then
 		last_tile_x, last_tile_y = tile_x, tile_y
 
 		lighting_imagedata:mapPixel(function(x, y, r, g, b, a)
