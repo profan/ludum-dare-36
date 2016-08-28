@@ -37,6 +37,8 @@ end
 function player:animate(dt)
 
 	local frames_per_second = 0.1
+	local cur_speed = self.vel_vec:len()
+	local relative = cur_speed / movement_speed
 
 	self.time = self.time + dt
 
