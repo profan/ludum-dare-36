@@ -38,11 +38,11 @@ function player:animate(dt)
 
 	local frames_per_second = 0.1
 	local cur_speed = self.vel_vec:len()
-	local relative = cur_speed / movement_speed
+	local speed_scale = cur_speed / max_speed
 
-	self.time = self.time + dt
-
+	self.time = (self.time + dt) * speed_scale
 	local vel = self.vel_vec:len()
+
 	if vel < 0.05 then
 		self.frame = 1
 	elseif self.time > 0.1 then
@@ -103,6 +103,7 @@ function player:update(camera, dt)
 		self:move(Vector(0, -movement_speed * dt))
 	elseif lk.isDown "s" then
 		self:move(Vector(0, movement_speed * dt))
+
 	end
 
 	if lk.isDown "a" then
