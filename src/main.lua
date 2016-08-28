@@ -295,7 +295,7 @@ end
 
 -- just chest collision for now
 function is_tile_collideable(tile)
-	return (tile == 4) or (tile == 5) or (tile == 10) or (tile == 11)
+	return (tile == 4) or (tile == 5) or (tile == 10) or (tile == 11) or (tile == 12)
 end
 
 -------------------------------
