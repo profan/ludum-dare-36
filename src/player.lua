@@ -54,8 +54,6 @@ function player:look_at(pos)
 	self.dir_vec = pos - self.pos 
 	self.dir_vec = self.dir_vec:normalized()
 
-	print(self.pos, pos)
-
 end
 
 function player:update(camera, dt)

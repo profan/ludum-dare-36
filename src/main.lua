@@ -203,12 +203,13 @@ end
 function love.draw()
 
 	camera:attach()
+	
+	draw_game()
 
 	for i=1, #objects do
 		objects[i]:draw()
 	end
 
-	draw_game()
 	camera:detach()
 
 	draw_debug()
