@@ -5,6 +5,7 @@ function game_object:new(x, y)
 	local new_obj = {}
 
 	new_obj.pos = Vector(x, y)
+	new_obj.target_dir_vec = Vector(0, -1)
 	new_obj.dir_vec = Vector(0, -1)
 	new_obj.vel_vec = Vector(0, 0)
 

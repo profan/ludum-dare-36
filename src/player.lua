@@ -1,3 +1,6 @@
+-- require it
+require "derp_math"
+
 -- locals and shit
 local lg = love.graphics
 local lk = love.keyboard
@@ -5,7 +8,8 @@ local lm = love.mouse
 
 local player = {}
 
-local movement_speed = 1
+local movement_speed = 75
+local turn_speed = 0.1 * math.pi -- RADIANS
 
 function player:new(spritesheet, frame_count)
 
@@ -16,6 +20,7 @@ function player:new(spritesheet, frame_count)
 
 	-- current animation frame, 1 is idle, REMEMBER LUA 1 INDEXING OK
 	new_obj.frame = 1
+	new_obj.time = 0
 
 	setmetatable(new_obj, self)
 	self.__index = self
@@ -26,10 +31,15 @@ end
 
 function player:animate(dt)
 
+	local frames_per_second = 0.1
+
+	self.time = self.time + dt
+
 	if self.vel_vec == Vector(0, 0) then
 		self.frame = 1
-	else
+	elseif self.time > 0.1 then
 		self.frame = ((self.frame + 1) % (#self.spritesheet.quads-1)) + 1
+		self.time = 0
 	end
 
 end
@@ -44,17 +54,21 @@ end
 
 function player:rotate(rad)
 
+	-- next, clamp turning speed
 	self.dir_vec = self.dir_vec:rotated(rad)
 
 end
 
 function player:look_at(pos)
 
-	-- i brain wrong, look at something else for a second
-
 	local tmp_vec = pos - self.pos
-	self.dir_vec = pos - self.pos 
-	self.dir_vec = self.dir_vec:normalized()
+	self.target_dir_vec = pos - self.pos 
+	self.target_dir_vec = self.target_dir_vec:normalized()
+
+	local angle = self.dir_vec:angleTo(self.target_dir_vec)
+	local clamped_angle = clamp(angle, -turn_speed, turn_speed)
+	print(angle, clamped_angle)
+	self:rotate(clamped_angle)
 
 end
 
@@ -63,15 +77,15 @@ function player:update(camera, dt)
 	-- change movement back to vectors for sideways movement
 
 	if lk.isDown "w" then
-		self:move(Vector(0, -1))
+		self:move(Vector(0, -movement_speed * dt))
 	elseif lk.isDown "s" then
-		self:move(Vector(0, 1))
+		self:move(Vector(0, movement_speed * dt))
 	end
 
 	if lk.isDown "a" then
-		self:move(Vector(-1, 0))
+		self:move(Vector(-movement_speed * dt, 0))
 	elseif lk.isDown "d" then
-		self:move(Vector(1, 0))
+		self:move(Vector(movement_speed * dt, 0))
 	end
 
 	self:look_at(Vector(camera:worldCoords(lm.getPosition())))
