@@ -74,8 +74,6 @@ end
 
 function player:update(camera, dt)
 
-	-- change movement back to vectors for sideways movement
-
 	if lk.isDown "w" then
 		self:move(Vector(0, -movement_speed * dt))
 	elseif lk.isDown "s" then
