@@ -6,14 +6,14 @@ local lg = love.graphics
 local lk = love.keyboard
 local lm = love.mouse
 
-local player = {}
+local wiseman = {}
 
 local max_speed = 1
-local running_speed = 3
+local running_speed = 2
 local movement_speed = 75
 local turn_speed = 0.05 * math.pi -- RADIANS
 
-function player:new(spritesheet, x, y)
+function wiseman:new(spritesheet, x, y)
 
 	local new_obj = Object:new(x, y)
 
@@ -34,7 +34,7 @@ function player:new(spritesheet, x, y)
 
 end
 
-function player:animate(dt)
+function wiseman:animate(dt)
 
 	local frames_per_second = 0.1
 	local cur_speed = self.vel_vec:len()
@@ -52,8 +52,7 @@ function player:animate(dt)
 
 end
 
--- wtf, oh fuck with is nil
-function player:collided(obj, is_tile)
+function wiseman:collided(obj, is_tile)
 	if is_tile then
 		self.vel_vec = self.vel_vec:rotated(math.pi) * 10 -- ... good enough :V
 	else
@@ -61,7 +60,7 @@ function player:collided(obj, is_tile)
 	end
 end
 
-function player:move(v)
+function wiseman:move(v)
 
 	-- yay
 	local ang = self.dir_vec:angleTo(Vector(0, -1))
@@ -74,14 +73,14 @@ function player:move(v)
 
 end
 
-function player:rotate(rad)
+function wiseman:rotate(rad)
 
 	-- next, clamp turning speed
 	self.dir_vec = self.dir_vec:rotated(rad)
 
 end
 
-function player:look_at(pos)
+function wiseman:look_at(pos)
 
 	local tmp_vec = pos - self.pos
 	self.target_dir_vec = pos - self.pos 
@@ -97,26 +96,11 @@ function player:look_at(pos)
 
 end
 
-function player:update(camera, dt)
+function wiseman:update(camera, dt)
 
-	if lk.isDown "w" then
-		self:move(Vector(0, -movement_speed * dt))
-	elseif lk.isDown "s" then
-		self:move(Vector(0, movement_speed * dt))
+	-- nein is wiseman
+	-- self:look_at(Vector(camera:worldCoords(lm.getPosition())))
 
-	end
-
-	if lk.isDown "a" then
-		self:move(Vector(-movement_speed * dt, 0))
-	elseif lk.isDown "d" then
-		self:move(Vector(movement_speed * dt, 0))
-	end
-
-	if lk.isDown "lshift" then
-		self.vel_vec = self.vel_vec * running_speed
-	end
-
-	self:look_at(Vector(camera:worldCoords(lm.getPosition())))
 	self:animate(dt) -- gotta regulate by game speed
 
 	self.pos = self.pos + self.vel_vec
@@ -124,7 +108,7 @@ function player:update(camera, dt)
 
 end
 
-function player:draw(camera)
+function wiseman:draw(camera)
 
 	-- DRAWE ZE FREAMES
 	local coord_system = Vector(0, -1)
@@ -135,4 +119,4 @@ function player:draw(camera)
 
 end
 
-return player
+return wiseman

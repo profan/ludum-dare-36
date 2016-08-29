@@ -91,6 +91,7 @@ local tile_map = {
 
 local Object = require "object"
 local Player = require "player"
+local Wiseman = require "wiseman"
 
 -------------------------------
 -- Game functions here! -------
@@ -107,6 +108,7 @@ function load_resources()
 	end
 
 	resources.player_spritesheet = lg.newImage("resources/professor_octopus.png")
+	resources.wiseman_spritesheet = lg.newImage("resources/wiseman.png")
 
 end
 
@@ -119,10 +121,10 @@ function setup_game()
 	local spritesheet_frames = 15 -- I LOVE ME SOME MAGIC NUMBERS
 	local sprite_frame_dim = 32
 
-	local make_quads = function()
+	local make_quads = function(frame_count, spritesheet)
 		local quads = {}
-		for i = 1, spritesheet_frames - 1 do 
-			quads[#quads+1] = lg.newQuad((i-1) * 32, 0, sprite_frame_dim, sprite_frame_dim, resources.player_spritesheet:getDimensions())
+		for i = 1, frame_count - 1 do
+			quads[#quads+1] = lg.newQuad((i-1) * 32, 0, sprite_frame_dim, sprite_frame_dim, spritesheet:getDimensions())
 		end 
 		return quads
 	end
@@ -130,12 +132,26 @@ function setup_game()
 	local spritesheet = {
 		image = resources.player_spritesheet,
 		frame_count = spritesheet_frames,
-		quads = make_quads()
+		quads = make_quads(spritesheet_frames, resources.player_spritesheet)
 	}
 
 	-- add all the quads and shit
 	player = Player:new(spritesheet, 176, 176)
-	objects[#objects+1] = player 
+	objects[#objects+1] = player
+
+	-- MORE MAGIC FUCK
+	local wiseman_frames = 14
+
+	-- wiseman spritesheet
+	local wiseman_spritesheet = {
+		image = resources.wiseman_spritesheet,
+		frame_count = wiseman_frames,
+		quads = make_quads(wiseman_frames, resources.wiseman_spritesheet)
+	}
+
+	-- add wiseman... where? :I
+	local wiseman = Wiseman:new(wiseman_spritesheet, 523, 508)
+	objects[#objects+1] = wiseman
 
 	-- set camera position to start where player is
 	camera:lookAt(player.pos.x, player.pos.y)
@@ -150,8 +166,6 @@ function setup_game()
 	lighting_imagedata:mapPixel(function(x, y, r, g, b, a)
 		return r, g, b, 255
 	end)
-
-	print(string.format("imd w: %d, h: %d", im_w, im_h))
 
 end
 
@@ -268,6 +282,11 @@ end
 function draw_game()
 
 	draw_map()
+
+	for i=1, #objects do
+		objects[i]:draw(camera)
+	end
+
 	draw_lighting()
 
 end
@@ -358,9 +377,6 @@ function love.draw()
 	
 	draw_game()
 
-	for i=1, #objects do
-		objects[i]:draw(camera)
-	end
 
 	camera:detach()
 
