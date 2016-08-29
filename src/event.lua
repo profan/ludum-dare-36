@@ -31,9 +31,10 @@ function event_handler:subscribe(e_type, fn)
 end
 
 function event_handler:push(event, e_type)
-	self.events[#self.events[e_type]+1] = event
+	self.events[e_type][#self.events[e_type]+1] = event
 end
 
+-- it helps if you call this, i assure you
 function event_handler:update(camera, dt)
 
 	for e_type, events in pairs(self.events) do

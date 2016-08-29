@@ -100,6 +100,12 @@ function player:look_at(pos)
 
 end
 
+function player:on_event(event)
+	if (event.subject == self) then
+		print("player got event!")
+	end
+end
+
 function player:update(camera, dt)
 
 	if lk.isDown "w" then

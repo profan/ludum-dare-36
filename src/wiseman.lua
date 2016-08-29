@@ -19,6 +19,7 @@ function wiseman:new(spritesheet, x, y)
 
 	-- things
 	new_obj.radius = 12
+	new_obj.alert_radius = 48
 
 	-- set the things
 	new_obj.spritesheet = spritesheet
@@ -101,7 +102,9 @@ end
 
 function wiseman:on_event(event)
 
-	print("got on_nearby event!")
+	if (event.subject == self) then
+		print("itsame!")
+	end
 
 end
 

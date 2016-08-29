@@ -145,7 +145,7 @@ function setup_game()
 
 	-- add all the quads and shit
 	player = Player:new(spritesheet, 176, 176)
-	event_handler:subscribe("on_talk", player.on_event)
+	event_handler:subscribe("on_approach", function(event) player:on_event(event) end)
 	objects[#objects+1] = player
 
 	-- MORE MAGIC FUCK
@@ -160,7 +160,7 @@ function setup_game()
 
 	-- add wiseman... where? :I
 	local wiseman = Wiseman:new(wiseman_spritesheet, 523, 508)
-	event_handler:subscribe("on_nearby", wiseman.on_event)
+	event_handler:subscribe("on_approach", function(event) wiseman:on_event(event) end)
 	objects[#objects+1] = wiseman
 
 	-- set camera position to start where player is
@@ -297,18 +297,38 @@ function draw_lighting()
 
 		flood_fill(tile_x, tile_y, 0, 145)
 
+		-- for each visible light source, do another flood fill (RIP FRAMERATE I MISSED YOU SO)
+		--  check if tile is close enough to edge of viewport, (add max light propagation distance to calculation)
+
+		--[[ for i, source in pairs(light_sources) do
+
+			-- wel this isnt.. quite righ
+			print(source)
+			local tile_x = math.floor((source % tile_map.width))
+			local tile_y = math.floor((source / tile_map.height))
+
+			print(tile_x, tile_y)
+			if inside_viewport(camera, tile_x, tile_y) then
+				flood_fill(tile_x, tile_y, 0, 85)
+			end
+
+		end 
+		]]--
+
 		-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
 		lighting_image:refresh()
 
 	end
 
-	-- for each visible light source, do another flood fill (RIP FRAMERATE I MISSED YOU SO)
-	--  check if tile is close enough to edge of viewport, (add max light propagation distance to calculation)
-
 	-- somehow scale texture, as it is just one real pixel per tile currently
 	local s_x = tile_map.width
 	lg.draw(lighting_image, 0, 0, 0, tile_map.tile_width, tile_map.tile_height)
 
+end
+
+-- well lol
+function inside_viewport(camera, x, y)
+	return true
 end
 
 -- DRAW ALL THE THINGS
@@ -335,6 +355,17 @@ function are_colliding(thing_one, thing_two)
 	if thing_one.radius and thing_two.radius then
 		return distance(thing_one.pos, thing_two.pos) < (thing_one.radius + thing_two.radius)
 	else 
+		return false
+	end
+
+end
+
+-- alert distance
+function is_nearby(thing_one, thing_two)
+
+	if thing_one.alert_radius then
+		return distance(thing_one.pos, thing_two.pos) < thing_one.alert_radius
+	else
 		return false
 	end
 
@@ -398,6 +429,17 @@ function love.update(dt)
 		end
 	end
 
+	-- gonna have millions of events, fix that later :D
+	-- actually for player just check  every other object, no need to go both ways for now
+	for i=1, #objects do
+		local obj = objects[i]
+		if obj ~= player and is_nearby(obj, player) then
+			event_handler:push({subject = obj}, "on_approach")
+		end
+	end
+
+	event_handler:update(camera, dt)
+	
 	for i=1, #objects do
 		objects[i]:update(camera, dt)
 	end
