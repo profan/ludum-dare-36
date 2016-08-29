@@ -11,6 +11,9 @@ The code is probably the greatest abomination I have ever produced, so look at i
 
 There is no audio, I considered it out of scope.. :D
 
+## How to run me?
+Just run ```love src``` when standing in the project folder.
+
 ## Built With
 * LÖVE
   * cupid
