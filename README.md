@@ -13,5 +13,7 @@ There is no audio, I considered it out of scope.. :D
 
 ## Built With
 * LÖVE
+  * cupid
+  * hump
 * Tiled
 * Aseprite
