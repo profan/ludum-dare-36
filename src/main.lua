@@ -434,7 +434,7 @@ function love.update(dt)
 	for i=1, #objects do
 		local obj = objects[i]
 		if obj ~= player and is_nearby(obj, player) then
-			event_handler:push({subject = obj}, "on_approach")
+			event_handler:push({approachee = player, subject = obj}, "on_approach")
 		end
 	end
 

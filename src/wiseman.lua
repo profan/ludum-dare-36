@@ -19,7 +19,10 @@ function wiseman:new(spritesheet, x, y)
 
 	-- things
 	new_obj.radius = 12
-	new_obj.alert_radius = 48
+	new_obj.alert_radius = 64
+
+	-- looking at thingy
+	new_obj.looking_at = nil
 
 	-- set the things
 	new_obj.spritesheet = spritesheet
@@ -103,7 +106,9 @@ end
 function wiseman:on_event(event)
 
 	if (event.subject == self) then
-		print("itsame!")
+
+		self.looking_at = event.approachee
+
 	end
 
 end
@@ -114,6 +119,13 @@ function wiseman:update(camera, dt)
 	-- self:look_at(Vector(camera:worldCoords(lm.getPosition())))
 
 	self:animate(dt) -- gotta regulate by game speed
+
+	-- not nil
+	if self.looking_at then
+		if distance(self.pos, self.looking_at.pos) < self.alert_radius then
+			self:look_at(self.looking_at.pos)
+		end
+	end
 
 	self.pos = self.pos + self.vel_vec
 	self.vel_vec = self.vel_vec * 0.85
