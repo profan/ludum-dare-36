@@ -100,6 +100,7 @@ local tile_map = {
 local Object = require "object"
 local Player = require "player"
 local Wiseman = require "wiseman"
+local DialogBox = require "dialog"
 
 -------------------------------
 -- Game functions here! -------
@@ -117,6 +118,7 @@ function load_resources()
 
 	resources.player_spritesheet = lg.newImage("resources/professor_octopus.png")
 	resources.wiseman_spritesheet = lg.newImage("resources/wiseman.png")
+	resources.dialog_font = lg.newFont("resources/VolterGoldfish.ttf", 24)
 
 end
 
@@ -312,7 +314,8 @@ function draw_lighting()
 				flood_fill(tile_x, tile_y, 0, 85)
 			end
 
-		end 
+		end
+
 		]]--
 
 		-- recreate texture from buffer now that it is changed (probably, we havent.. checked for now)
@@ -449,12 +452,14 @@ end
 function love.draw()
 
 	camera:attach()
-	
+
+	lg.setFont(resources.dialog_font)
 	draw_game()
 
 
 	camera:detach()
 
+	lg.setNewFont(12)
 	draw_debug()
 
 end
