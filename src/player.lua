@@ -17,6 +17,9 @@ function player:new(spritesheet, x, y)
 
 	local new_obj = Object:new(x, y)
 
+	-- radius
+	new_obj.radius = 12
+
 	-- set the things
 	new_obj.spritesheet = spritesheet
 

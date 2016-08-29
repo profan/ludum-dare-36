@@ -17,6 +17,9 @@ function wiseman:new(spritesheet, x, y)
 
 	local new_obj = Object:new(x, y)
 
+	-- things
+	new_obj.radius = 12
+
 	-- set the things
 	new_obj.spritesheet = spritesheet
 
@@ -93,6 +96,12 @@ function wiseman:look_at(pos)
 	local as = math.asin(cpd)
 	local ca = clamp(as, -turn_speed, turn_speed)
 	self:rotate(-ca)
+
+end
+
+function wiseman:on_event(event)
+
+	print("got on_nearby event!")
 
 end
 

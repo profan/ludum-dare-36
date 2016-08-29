@@ -9,6 +9,7 @@ require("cupid.debug")
 -------------------------------
 
 require "defines"
+local EventHandler = require "event"
 
 -------------------------------
 -- Short Forms ----------------
@@ -43,12 +44,18 @@ local tiles = {
 	{},
 	{name = "sandstone_wall", fname = "resources/sandstone_wall.png"},
 	{name = "other_pillar", fname = "resources/other_pillar.png"},
-	{name = "bench", fname = "resources/bench.png"}
+	{name = "bench", fname = "resources/bench.png"},
+	{},
+	{},
+	{name = "pillar_thing", fname = "resources/pillar_thing.png"}
 }
 
 -------------------------------
 -- Global game variables! -----
 -------------------------------
+
+-- HUE HUE UHE IS GLOBAL
+event_handler = EventHandler:new()
 
 local camera = Camera(0, 0, 1)
 local player = nil
@@ -137,6 +144,7 @@ function setup_game()
 
 	-- add all the quads and shit
 	player = Player:new(spritesheet, 176, 176)
+	event_handler:subscribe("on_talk", player.on_event)
 	objects[#objects+1] = player
 
 	-- MORE MAGIC FUCK
@@ -151,6 +159,7 @@ function setup_game()
 
 	-- add wiseman... where? :I
 	local wiseman = Wiseman:new(wiseman_spritesheet, 523, 508)
+	event_handler:subscribe("on_nearby", wiseman.on_event)
 	objects[#objects+1] = wiseman
 
 	-- set camera position to start where player is
@@ -300,7 +309,7 @@ end
 function are_colliding(thing_one, thing_two)
 
 	if thing_one.radius and thing_two.radius then
-		return distance(thing_one.pos, thing_two.pos) > (thing_one.radius + thing_two.radius)
+		return distance(thing_one.pos, thing_two.pos) < (thing_one.radius + thing_two.radius)
 	else 
 		return false
 	end
@@ -315,7 +324,7 @@ end
 
 -- just chest collision for now
 function is_tile_collideable(tile)
-	return (tile == 4) or (tile == 5) or (tile == 10) or (tile == 11) or (tile == 12)
+	return (tile == 2) or (tile == 4) or (tile == 5) or (tile == 10) or (tile == 11) or (tile == 12)
 end
 
 -------------------------------
