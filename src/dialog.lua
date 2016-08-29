@@ -19,6 +19,12 @@ function dialog:new(options)
 
 end
 
+function dialog:on_hover()
+
+	print("dialog was hoevertedeaasd!")
+
+end
+
 function dialog:update(camera, dt)
 
 end

@@ -103,6 +103,7 @@ local Object = require "object"
 local Player = require "player"
 local Wiseman = require "wiseman"
 local Dialog = require "dialog"
+local Mouse = require "mouse"
 
 -------------------------------
 -- Game functions here! -------
@@ -125,7 +126,6 @@ function load_resources()
 
 end
 
--- how the fuck did we get to ~31 ms
 function setup_game()
 
 	-- load images and such
@@ -172,7 +172,9 @@ function setup_game()
 	-- wiseman first dialog box
 	local box = Dialog:new({"hello, world"})
 	wiseman.dialog_box = box -- violence
+
 	ui_objects[#ui_objects+1] = box
+	ui_objects[#ui_objects+1] = Mouse:new()
 
 	-- set camera position to start where player is
 	camera:lookAt(player.pos.x, player.pos.y)
@@ -311,7 +313,9 @@ function draw_lighting()
 		-- for each visible light source, do another flood fill (RIP FRAMERATE I MISSED YOU SO)
 		--  check if tile is close enough to edge of viewport, (add max light propagation distance to calculation)
 
-		--[[ for i, source in pairs(light_sources) do
+		--[[
+
+		for i, source in pairs(light_sources) do
 
 			-- wel this isnt.. quite righ
 			print(source)
@@ -402,6 +406,10 @@ function is_tile_collideable(tile)
 	return (tile == 2) or (tile == 4) or (tile == 5) or (tile == 10) or (tile == 11) or (tile == 12)
 end
 
+function point_inside_box(pos, x, y, w, h)
+	return pos.x < x + w and pos.x > x and pos.y > y and pos.y < y + h
+end
+
 -------------------------------
 -- Love functions go here! ----
 -------------------------------
@@ -446,6 +454,12 @@ function love.update(dt)
 				objects[o_i].collided(i_o)
 				objects[i_i].collided(o_o)
 			end
+		end
+	end
+
+	-- ui object collisions
+	for o_i=1, #ui_objects do
+		for i_i=1, #ui_objects do
 		end
 	end
 

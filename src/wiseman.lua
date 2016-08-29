@@ -106,10 +106,8 @@ end
 function wiseman:on_event(event)
 
 	if (event.subject == self) then
-
 		self.looking_at = event.approachee
 		self.dialog_box.visible = true
-
 	end
 
 end
