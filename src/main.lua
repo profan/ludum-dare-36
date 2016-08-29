@@ -68,10 +68,12 @@ local camera_state = {
 }
 
 local objects = {}
+local ui_objects = {}
 local resources = {}
 local tile_resources = {}
 local lighting_imagedata = {}
 local lighting_image = {}
+local default_font = {}
 
 local map_data = require "data/level"
 
@@ -100,7 +102,7 @@ local tile_map = {
 local Object = require "object"
 local Player = require "player"
 local Wiseman = require "wiseman"
-local DialogBox = require "dialog"
+local Dialog = require "dialog"
 
 -------------------------------
 -- Game functions here! -------
@@ -119,9 +121,11 @@ function load_resources()
 	resources.player_spritesheet = lg.newImage("resources/professor_octopus.png")
 	resources.wiseman_spritesheet = lg.newImage("resources/wiseman.png")
 	resources.dialog_font = lg.newFont("resources/VolterGoldfish.ttf", 24)
+	default_font = lg.getFont()
 
 end
 
+-- how the fuck did we get to ~31 ms
 function setup_game()
 
 	-- load images and such
@@ -164,6 +168,11 @@ function setup_game()
 	local wiseman = Wiseman:new(wiseman_spritesheet, 523, 508)
 	event_handler:subscribe("on_approach", function(event) wiseman:on_event(event) end)
 	objects[#objects+1] = wiseman
+
+	-- wiseman first dialog box
+	local box = Dialog:new({"hello, world"})
+	wiseman.dialog_box = box -- violence
+	ui_objects[#ui_objects+1] = box
 
 	-- set camera position to start where player is
 	camera:lookAt(player.pos.x, player.pos.y)
@@ -347,6 +356,14 @@ function draw_game()
 
 end
 
+function draw_ui()
+
+	for i=1, #ui_objects do
+		ui_objects[i]:draw(camera)
+	end
+
+end
+
 -- magnitude of difference between positions to get distance
 function distance(p1, p2)
 	return (p1 - p2):len()
@@ -452,14 +469,13 @@ end
 function love.draw()
 
 	camera:attach()
-
-	lg.setFont(resources.dialog_font)
 	draw_game()
-
-
 	camera:detach()
 
-	lg.setNewFont(12)
+	lg.setFont(resources.dialog_font)
+	draw_ui()
+
+	lg.setFont(default_font)
 	draw_debug()
 
 end
