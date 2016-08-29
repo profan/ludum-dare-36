@@ -115,9 +115,6 @@ end
 
 function wiseman:update(camera, dt)
 
-	-- nein is wiseman
-	-- self:look_at(Vector(camera:worldCoords(lm.getPosition())))
-
 	self:animate(dt) -- gotta regulate by game speed
 
 	-- not nil
