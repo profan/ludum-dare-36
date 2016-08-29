@@ -47,7 +47,8 @@ local tiles = {
 	{name = "bench", fname = "resources/bench.png"},
 	{},
 	{},
-	{name = "pillar_thing", fname = "resources/pillar_thing.png"}
+	{name = "pillar_thing", fname = "resources/pillar_thing.png"},
+	{name = "lamp", fname = "resources/lamp.png"}
 }
 
 -------------------------------
@@ -171,6 +172,9 @@ function setup_game()
 	lighting_image = lg.newImage(lighting_imagedata)
 	lighting_image:setFilter("nearest")
 
+	-- collect all light sources on map
+	light_sources = collect_light_sources(tile_map)
+
 	-- reset imagedata to all black
 	lighting_imagedata:mapPixel(function(x, y, r, g, b, a)
 		return r, g, b, 255
@@ -222,6 +226,23 @@ end
 
 local last_tile_x = 0
 local last_tile_y = 0
+
+function collect_light_sources(map)
+
+	-- tile id for light source
+	local light_source = 15
+
+	local light_sources = {}
+
+	for t_i=1, #map.data do
+		if map.data[t_i] == light_source then
+			light_sources[#light_sources+1] = t_i
+		end
+	end
+
+	return light_sources
+
+end
 
 function draw_lighting()
 
@@ -280,6 +301,9 @@ function draw_lighting()
 		lighting_image:refresh()
 
 	end
+
+	-- for each visible light source, do another flood fill (RIP FRAMERATE I MISSED YOU SO)
+	--  check if tile is close enough to edge of viewport, (add max light propagation distance to calculation)
 
 	-- somehow scale texture, as it is just one real pixel per tile currently
 	local s_x = tile_map.width
